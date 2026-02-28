@@ -214,21 +214,21 @@ export default function Community() {
                         <div className="space-y-3">
                             <h3 className="text-sm font-bold text-gray-400 tracking-wider uppercase mb-2">Top Contributors This Week</h3>
                             {TOP_CONTRIBUTORS.map((contributor, i) => (
-                                <div key={contributor.id} className={`flex items-center justify-between p-3 rounded-xl border ${contributor.id === '3' ? 'border-[#2563EB] bg-blue-50/30' : 'border-gray-100 bg-gray-50/50'}`}>
+                                <div key={contributor.id} className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-3 rounded-xl border gap-3 sm:gap-0 ${contributor.id === '3' ? 'border-[#2563EB] bg-blue-50/30' : 'border-gray-100 bg-gray-50/50'}`}>
                                     <div className="flex items-center gap-4">
                                         <div className="w-6 text-center font-bold text-gray-400">#{i + 1}</div>
-                                        <img src={contributor.avatar} alt={contributor.name} className="w-10 h-10 rounded-full border border-gray-200 bg-white" />
+                                        <img src={contributor.avatar} alt={contributor.name} className="w-10 h-10 rounded-full border border-gray-200 bg-white shrink-0" />
                                         <div>
                                             <div className="font-bold text-sm text-gray-900">{contributor.name}</div>
                                             <div className="text-xs font-medium text-gray-500">{contributor.college}</div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex flex-col items-end">
+                                    <div className="flex items-center justify-between sm:justify-end gap-4 pl-10 sm:pl-0 w-full sm:w-auto">
+                                        <div className="flex flex-col items-start sm:items-end">
                                             <div className="font-bold text-[#2563EB]">{contributor.score} <span className="text-xs text-gray-400">XP</span></div>
                                             {contributor.trend === 'up' && <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5"><ArrowUpCircle className="w-3 h-3" /> Rising</span>}
                                         </div>
-                                        <button className="flex items-center gap-1.5 bg-white border border-gray-200 hover:bg-gray-50 px-3 py-1.5 rounded-lg text-xs font-bold text-gray-600 transition-colors cursor-help group">
+                                        <button className="flex items-center gap-1.5 bg-white border border-gray-200 hover:bg-gray-50 px-3 py-1.5 rounded-lg text-xs font-bold text-gray-600 transition-colors cursor-help group shrink-0 shadow-sm">
                                             <ArrowUpCircle className="w-4 h-4 text-emerald-500 group-hover:-translate-y-0.5 transition-transform" />
                                             Helpful
                                         </button>
