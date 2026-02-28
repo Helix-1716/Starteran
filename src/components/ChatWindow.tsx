@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Video, Search, MoreVertical, Paperclip, Smile, Send, Mic, Lock, Loader2, Image, FileText } from 'lucide-react';
+import { Video, Search, MoreVertical, Paperclip, Smile, Send, Mic, Lock, Loader2, Image, FileText, ArrowLeft } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import { useChatContext } from '../contexts/ChatContext';
 import { useChat } from '../hooks/useChat';
@@ -283,7 +283,7 @@ export default function ChatWindow() {
 
     if (!activeChat) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 z-10 relative border-b-8 border-blue-600">
+            <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-gray-50 z-10 relative border-b-8 border-blue-600">
                 <div className="text-center z-10 max-w-lg px-6 flex flex-col items-center">
                     <Lock className="w-16 h-16 text-gray-300 mb-6" />
                     <h3 className="text-[32px] font-light text-gray-800 mb-4">StartEarn Messages</h3>
@@ -296,10 +296,16 @@ export default function ChatWindow() {
     }
 
     return (
-        <div className="flex-1 flex flex-col bg-gray-50 relative w-[70%] z-10 h-full">
+        <div className="flex flex-1 flex-col bg-gray-50 relative w-full md:w-[70%] z-10 h-full">
             {/* Chat Header */}
             <div className="h-[59px] bg-white px-4 flex items-center justify-between border-b border-gray-200 shrink-0 z-30 relative w-full">
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2 md:space-x-4">
+                    <button
+                        onClick={() => setActiveChat(null)}
+                        className="md:hidden p-2 -ml-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
                     <img
                         src={activeChat.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(activeChat.email || activeChat.full_name)}`}
                         alt=""
@@ -310,9 +316,9 @@ export default function ChatWindow() {
                             target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(activeChat.email || activeChat.full_name)}`;
                         }}
                     />
-                    <div>
-                        <h3 className="text-gray-900 font-semibold text-[16px] leading-5">{activeChat.full_name}</h3>
-                        <p className="text-[13px] text-gray-500">
+                    <div className="flex flex-col overflow-hidden">
+                        <h3 className="text-gray-900 font-semibold text-[16px] leading-5 truncate max-w-[140px] sm:max-w-[200px]">{activeChat.full_name}</h3>
+                        <p className="text-[13px] text-gray-500 truncate max-w-[140px] sm:max-w-[200px]">
                             {activeChat.online ? 'Online' : `Last seen ${formatLastSeen(activeChat.lastSeen)}`}
                         </p>
                     </div>

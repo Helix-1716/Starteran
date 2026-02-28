@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Users, Eye, MessageCircle, Calendar, TrendingUp, Edit, Trash2, MoreVertical, AlertCircle } from 'lucide-react';
+import { Plus, Users, Eye, MessageCircle, Calendar, TrendingUp, Trash2, AlertCircle, Search, Award, Bookmark, Filter } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { Job, JobApplication, createJob, deleteJob, updateJob, subscribeToRecruiterJobs, subscribeToJobApplications } from '../lib/jobsService';
+import { Job, createJob, deleteJob, updateJob, subscribeToRecruiterJobs } from '../lib/jobsService';
 
 // Remove mock data - will use real-time data from Firestore
 
@@ -39,12 +39,17 @@ const mockApplications = [
   },
 ];
 
+const mockTalentPool = [
+  { id: 't1', name: 'Alex River', level: 8, title: 'Elite Contender', skills: ['System Design', 'Go', 'Kubernetes'], winRate: '82%', college: 'Stanford', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex', bookmarked: true },
+  { id: 't2', name: 'Sarah Jenkins', level: 5, title: 'Rising Star', skills: ['React', 'TypeScript', 'UI/UX'], winRate: '65%', college: 'MIT', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah', bookmarked: false },
+  { id: 't3', name: 'David Chen', level: 7, title: 'Campus Challenger', skills: ['Python', 'AI/ML', 'Data Science'], winRate: '71%', college: 'UC Berkeley', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David', bookmarked: false },
+];
+
 export default function RecruiterDashboard() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'jobs' | 'applications'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'jobs' | 'applications' | 'talentpool'>('overview');
   const [showJobForm, setShowJobForm] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [applications, setApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -117,7 +122,7 @@ export default function RecruiterDashboard() {
       console.log('🎯 RecruiterDashboard: Submitting job form...');
       setError(null);
       const skillsArray = formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill);
-      
+
       const jobData = {
         title: formData.title,
         company: formData.company,
@@ -131,9 +136,9 @@ export default function RecruiterDashboard() {
         recruiterAvatar: user.avatar_url,
         status: 'Active' as const,
       };
-      
+
       console.log('🎯 Job data to create:', jobData);
-      
+
       await createJob(jobData);
       console.log('🎯 Job created successfully!');
 
@@ -266,17 +271,17 @@ export default function RecruiterDashboard() {
               { id: 'overview', label: 'Overview', icon: TrendingUp },
               { id: 'jobs', label: 'My Job Posts', icon: Users },
               { id: 'applications', label: 'Applications', icon: MessageCircle },
+              { id: 'talentpool', label: 'Talent Pool Search', icon: Search },
             ].map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center py-4 px-2 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                    activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
+                  className={`flex items-center py-4 px-2 border-b-2 font-medium text-sm transition-colors duration-200 ${activeTab === tab.id
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
                 >
                   <Icon className="w-4 h-4 mr-2" />
                   {tab.label}
@@ -303,7 +308,7 @@ export default function RecruiterDashboard() {
                     </div>
                     <div className="ml-auto text-sm text-gray-500">2 hours ago</div>
                   </div>
-                  
+
                   <div className="flex items-center p-4 bg-green-50 rounded-lg">
                     <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                       <MessageCircle className="w-5 h-5 text-green-600" />
@@ -373,7 +378,7 @@ export default function RecruiterDashboard() {
                               {job.status}
                             </span>
                           </div>
-                          
+
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm text-gray-600">
                             <div>
                               <span className="font-medium">Company:</span> {job.company}
@@ -417,7 +422,7 @@ export default function RecruiterDashboard() {
                             <option value="Paused">Paused</option>
                             <option value="Closed">Closed</option>
                           </select>
-                          <button 
+                          <button
                             onClick={() => handleDeleteJob(job.id!)}
                             className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
                             title="Delete Job"
@@ -469,9 +474,9 @@ export default function RecruiterDashboard() {
                               {application.status}
                             </span>
                           </div>
-                          
+
                           <p className="text-gray-600 mb-2">Applied for: <span className="font-medium">{application.jobTitle}</span></p>
-                          
+
                           <div className="flex items-center gap-4 mb-3 text-sm text-gray-600">
                             <div>
                               <span className="font-medium">Experience:</span> {application.experience}
@@ -508,6 +513,87 @@ export default function RecruiterDashboard() {
                             </Link>
                           </div>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'talentpool' && (
+            <div className="space-y-6">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">StartEarn Talent Network</h3>
+                  <p className="text-sm text-gray-500">Discover top-ranked students based on battle wins and verified skills.</p>
+                </div>
+              </div>
+
+              {/* Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input type="text" placeholder="Search skills (e.g. React)" className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none" />
+                </div>
+                <div>
+                  <select className="w-full py-2 px-3 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+                    <option>Min. Level (Any)</option>
+                    <option>Level 5+</option>
+                    <option>Level 8+</option>
+                  </select>
+                </div>
+                <div>
+                  <select className="w-full py-2 px-3 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+                    <option>Win Rate (Any)</option>
+                    <option>60%+ Win Rate</option>
+                    <option>80%+ Win Rate</option>
+                  </select>
+                </div>
+                <div>
+                  <button className="w-full bg-white border border-gray-200 hover:bg-gray-100 text-gray-700 py-2 px-4 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+                    <Filter className="w-4 h-4" /> More Filters
+                  </button>
+                </div>
+              </div>
+
+              {/* Top Talent Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {mockTalentPool.map((talent) => (
+                  <div key={talent.id} className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <img src={talent.avatar} alt={talent.name} className="w-14 h-14 rounded-full border border-gray-200" />
+                        <div>
+                          <h4 className="text-lg font-bold text-gray-900 leading-tight flex items-center gap-2">
+                            {talent.name}
+                            {talent.level >= 7 && <Award className="w-4 h-4 text-[#2563EB]" />}
+                          </h4>
+                          <div className="text-sm font-semibold text-[#2563EB]">Level {talent.level} · {talent.title}</div>
+                          <div className="text-xs text-gray-500 font-medium mt-0.5">{talent.college}</div>
+                        </div>
+                      </div>
+                      <button className={`p-2 rounded-full transition-colors ${talent.bookmarked ? 'bg-blue-50 text-[#2563EB]' : 'text-gray-400 hover:bg-gray-50'}`}>
+                        <Bookmark className="w-5 h-5" fill={talent.bookmarked ? 'currentColor' : 'none'} />
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {talent.skills.map((skill) => (
+                        <span key={skill} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-md text-xs font-bold">{skill}</span>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between border-t border-gray-100 pt-4 mt-auto">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Battle Win Rate</span>
+                        <span className="text-sm font-black text-emerald-600">{talent.winRate}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button className="text-sm text-gray-600 font-bold hover:text-gray-900">View Public Portfolio</button>
+                        <button className="bg-[#2563EB] hover:bg-blue-700 text-white text-sm font-bold py-2 px-5 rounded-lg shadow-sm transition-colors">
+                          Send Invite
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -565,7 +651,7 @@ export default function RecruiterDashboard() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Job Type</label>
-                  <select 
+                  <select
                     name="type"
                     value={formData.type}
                     onChange={handleInputChange}

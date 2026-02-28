@@ -102,6 +102,13 @@ export default function Navbar() {
                   Dashboard
                 </Link>
                 <Link
+                  to="/ai-opportunities"
+                  onClick={() => playClick()}
+                  className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-300 ${isActive('/ai-opportunities') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:text-blue-600 flex items-center gap-1'}`}
+                >
+                  AI Curated ✨
+                </Link>
+                <Link
                   to="/chat"
                   onClick={() => playClick()}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ${isActive('/chat') ? 'ring-2 ring-blue-500 bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 hover:text-blue-600'}`}
@@ -236,6 +243,13 @@ export default function Navbar() {
                   onClick={handleNavLinkClick}
                 >
                   Dashboard
+                </Link>
+                <Link
+                  to="/ai-opportunities"
+                  className={`block px-3 py-2 rounded-full text-base font-medium transition-all duration-300 ${isActive('/ai-opportunities') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:text-blue-600 flex items-center gap-2'}`}
+                  onClick={handleNavLinkClick}
+                >
+                  AI Curated ✨
                 </Link>
                 <Link
                   to="/chat"

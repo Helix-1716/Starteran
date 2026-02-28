@@ -10,7 +10,7 @@ import StudentDashboard from './components/StudentDashboard';
 import JobDetails from './components/JobDetails';
 import Profile from './components/Profile';
 import Chat from './components/Chat';
-import Navbar from './components/Navbar';
+import SidebarLayout from './components/SidebarLayout';
 import ExploreIdeas from './components/ExploreIdeas';
 import ExploreAITools from './components/ExploreAITools';
 import RatingPage from './components/RatingPage';
@@ -23,6 +23,14 @@ import HelpCenter from './components/HelpCenter';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfService from './components/TermsOfService';
 import Feedback from './components/Feedback';
+import AIOpportunityDashboard from './components/AIOpportunityDashboard';
+import Leaderboard from './components/Leaderboard';
+import LiveBattle from './components/LiveBattle';
+import Community from './components/Community';
+import Portfolio from './components/Portfolio';
+import MicroInternships from './components/MicroInternships';
+import GrowthDashboard from './components/GrowthDashboard';
+import { GameProvider } from './contexts/GameContext';
 
 import AuthLoader from './components/AuthLoader';
 
@@ -38,8 +46,7 @@ function AppContent() {
   const showNavbar = user && location.pathname !== '/' && location.pathname !== '/auth';
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {showNavbar && <Navbar />}
+    <SidebarLayout showLayout={!!showNavbar}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
@@ -63,17 +70,26 @@ function AppContent() {
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/feedback" element={<Feedback />} />
+        <Route path="/ai-opportunities" element={<AIOpportunityDashboard />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/battle" element={<LiveBattle />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/micro-internships" element={<MicroInternships />} />
+        <Route path="/growth" element={<GrowthDashboard />} />
       </Routes>
-    </div>
+    </SidebarLayout>
   );
 }
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <GameProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </GameProvider>
     </AuthProvider>
   );
 }
